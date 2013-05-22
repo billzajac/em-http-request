@@ -12,6 +12,7 @@ module EventMachine
 
   class HttpStubConnection < Connection
     include Deferrable
+    attr_accessor :connected
     attr_reader :parent
 
     def parent=(p)
@@ -25,10 +26,16 @@ module EventMachine
 
     def connection_completed
       @parent.connection_completed
+      connected = true
     end
 
     def unbind(reason=nil)
       @parent.unbind(reason)
+      connected = false
+    end
+
+    def connected?
+      !!connected
     end
   end
 
