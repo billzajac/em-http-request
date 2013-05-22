@@ -153,7 +153,7 @@ module EventMachine
       else
         start
       end
-      connected = true
+      @connected = true
     end
 
     def start
@@ -193,7 +193,7 @@ module EventMachine
         @deferred = true
         @conn.close_connection
       end
-      connected = false
+      @connected = false
     end
     alias :close :unbind
 
@@ -206,7 +206,7 @@ module EventMachine
     end
 
     def connected?
-      !!connected
+      !!@connected
     end
 
     private
