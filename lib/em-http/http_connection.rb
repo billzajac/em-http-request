@@ -12,7 +12,6 @@ module EventMachine
 
   class HttpStubConnection < Connection
     include Deferrable
-    attr_accessor :connected
     attr_reader :parent
 
     def parent=(p)
@@ -26,16 +25,10 @@ module EventMachine
 
     def connection_completed
       @parent.connection_completed
-      connected = true
     end
 
     def unbind(reason=nil)
       @parent.unbind(reason)
-      connected = false
-    end
-
-    def connected?
-      !!connected
     end
   end
 
@@ -44,7 +37,7 @@ module EventMachine
     include Socksify
 
     attr_reader :deferred
-    attr_accessor :error, :connopts, :uri, :conn
+    attr_accessor :error, :connopts, :uri, :conn, :connected
 
     def initialize
       @deferred = true
@@ -160,6 +153,7 @@ module EventMachine
       else
         start
       end
+      connected = true
     end
 
     def start
@@ -199,6 +193,7 @@ module EventMachine
         @deferred = true
         @conn.close_connection
       end
+      connected = false
     end
     alias :close :unbind
 
@@ -208,6 +203,10 @@ module EventMachine
 
     def stream_file_data(filename, args = {})
       @conn.stream_file_data filename, args
+    end
+
+    def connected?
+      !!connected
     end
 
     private
